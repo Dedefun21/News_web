@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
 
@@ -119,54 +119,44 @@ interface NavbarProps {
 }
 function Navbar({ currentCategory, onCategoryChange }: NavbarProps) {
   return (
-    <header style={{ position: "sticky", top: 0, zIndex: 100, backgroundColor: "#f9f8f6", borderBottom: "1px solid #e0ddd8" }}>
-      <nav style={{ maxWidth: 900, margin: "0 auto", padding: "0 24px", height: 56, display: "flex", alignItems: "center", gap: 28 }}>
-        <button 
-          onClick={() => onCategoryChange("")}
-          style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "Georgia, serif", fontWeight: 900, fontSize: "1.05rem", letterSpacing: "0.04em", color: "#1a1a1a", textDecoration: "none", whiteSpace: "nowrap", flexShrink: 0, padding: 0 }}
-        >
-          INI BERITA
-        </button>
-
-        <ul style={{ display: "flex", alignItems: "center", gap: 2, listStyle: "none", margin: 0, padding: 0, flex: 1, overflowX: "auto" }}>
-          {NAV_LINKS.map((link) => {
-            const isActive = currentCategory === link.path;
-            return (
-              <li key={link.label}>
-                <button
-                  onClick={() => onCategoryChange(link.path)}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    borderBottom: isActive ? "2px solid #1a1a1a" : "2px solid transparent",
-                    cursor: "pointer",
-                    display: "inline-block",
-                    fontFamily: "system-ui, sans-serif",
-                    fontSize: "0.68rem",
-                    fontWeight: 500,
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                    color: isActive ? "#1a1a1a" : "#6b6b6b",
-                    padding: "6px 7px",
-                  }}
-                >
-                  {link.label}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-
-        <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
-          <button aria-label="Search" style={{ background: "none", border: "none", cursor: "pointer", color: "#1a1a1a", padding: 6, display: "flex", alignItems: "center", borderRadius: 4 }}>
-            <SearchIcon />
+    <header className="w-full top-0 sticky z-50 bg-[#001F3F] border-b border-[#001F3F] h-20 text-white shadow-md">
+      <nav className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto h-full">
+        <div className="flex items-center gap-8">
+          <button
+            onClick={() => onCategoryChange("")}
+            className="font-headline-md text-headline-md font-bold text-white bg-transparent border-none cursor-pointer"
+          >
+            INI BERITA
           </button>
-          <button aria-label="Account" style={{ background: "none", border: "none", cursor: "pointer", color: "#1a1a1a", padding: 6, display: "flex", alignItems: "center", borderRadius: 4 }}>
-            <UserIcon />
-          </button>
-          <a href="/subscribe" style={{ backgroundColor: "#1a1a1a", color: "#f9f8f6", fontFamily: "system-ui, sans-serif", fontSize: "0.68rem", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", padding: "8px 16px", borderRadius: 2, textDecoration: "none" }}>
+          <ul className="hidden lg:flex items-center gap-6 m-0 p-0 list-none">
+            {NAV_LINKS.map((link) => {
+              const isActive = currentCategory === link.path;
+              return (
+                <li key={link.label}>
+                  <button
+                    onClick={() => onCategoryChange(link.path)}
+                    className={`font-label-sm text-label-sm uppercase tracking-wider h-20 flex items-center transition-colors duration-200 cursor-pointer bg-transparent border-t-0 border-l-0 border-r-0 ${isActive
+                      ? "text-white border-b-2 border-white"
+                      : "text-white/70 hover:text-white border-b-2 border-transparent"
+                      }`}
+                  >
+                    {link.label}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+        <div className="flex items-center gap-4">
+          <button className="hidden md:flex items-center px-6 py-2 bg-white text-[#001F3F] font-label-sm uppercase tracking-wider active:scale-95 transition-transform cursor-pointer border-none rounded">
             Subscribe
-          </a>
+          </button>
+          <button className="p-2 text-white/70 hover:text-white transition-colors bg-transparent border-none cursor-pointer flex items-center">
+            <span className="material-symbols-outlined">account_circle</span>
+          </button>
+          <button className="lg:hidden p-2 text-white/70 hover:text-white transition-colors bg-transparent border-none cursor-pointer flex items-center">
+            <span className="material-symbols-outlined">menu</span>
+          </button>
         </div>
       </nav>
     </header>
@@ -179,9 +169,18 @@ interface HeroStoryProps {
 }
 
 function HeroStory({ article }: HeroStoryProps) {
+  const params = new URLSearchParams({
+    title: article.title,
+    link: article.link,
+    contentSnippet: article.contentSnippet,
+    isoDate: article.isoDate,
+    imageSmall: article.image?.small || "",
+    imageLarge: article.image?.large || "",
+  });
+
   return (
     <section style={{ maxWidth: 900, margin: "0 auto", padding: "48px 24px 56px", display: "grid", gridTemplateColumns: "3fr 2fr", gap: 40, alignItems: "center" }}>
-      <div style={{ position: "relative", width: "100%", aspectRatio: "4/3", backgroundColor: "#2a2a2a", borderRadius: 2, display: "flex", overflow: "hidden" }}>
+      <Link href={`/isi?${params.toString()}`} style={{ display: "block", position: "relative", width: "100%", aspectRatio: "4/3", backgroundColor: "#2a2a2a", borderRadius: 2, overflow: "hidden", textDecoration: "none" }}>
         {article.image?.large ? (
           <Image src={article.image.large} alt={article.title} fill style={{ objectFit: "cover" }} />
         ) : (
@@ -189,7 +188,7 @@ function HeroStory({ article }: HeroStoryProps) {
             <GlobeIcon />
           </div>
         )}
-      </div>
+      </Link>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
         <span style={{ display: "inline-block", alignSelf: "flex-start", backgroundColor: "#1a1a1a", color: "#f9f8f6", fontFamily: "system-ui, sans-serif", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", padding: "4px 8px", borderRadius: 2 }}>
@@ -197,17 +196,17 @@ function HeroStory({ article }: HeroStoryProps) {
         </span>
 
         <h1 style={{ fontFamily: "Georgia, serif", fontSize: "1.85rem", fontWeight: 900, lineHeight: 1.1, letterSpacing: "-0.01em", color: "#1a1a1a", margin: 0 }}>
-          {article.title}
+          <Link href={`/isi?${params.toString()}`} style={{ color: "inherit", textDecoration: "none" }}>{article.title}</Link>
         </h1>
 
         <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "0.875rem", lineHeight: 1.7, color: "#6b6b6b", margin: 0 }}>
           {article.contentSnippet}
         </p>
 
-        <a href={article.link} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 6, alignSelf: "flex-start", fontFamily: "system-ui, sans-serif", fontSize: "0.66rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#1a1a1a", textDecoration: "none", borderBottom: "1px solid #1a1a1a", paddingBottom: 2 }}>
+        <Link href={`/isi?${params.toString()}`} style={{ display: "inline-flex", alignItems: "center", gap: 6, alignSelf: "flex-start", fontFamily: "system-ui, sans-serif", fontSize: "0.66rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#1a1a1a", textDecoration: "none", borderBottom: "1px solid #1a1a1a", paddingBottom: 2 }}>
           Baca Selengkapnya
           <ArrowRightIcon />
-        </a>
+        </Link>
       </div>
     </section>
   );
@@ -221,9 +220,20 @@ function NewsCard({ title, link, contentSnippet, image, isoDate }: ApiArticle) {
     year: "numeric"
   });
 
+  const params = new URLSearchParams({
+    title,
+    link,
+    contentSnippet,
+    isoDate,
+    imageSmall: image?.small || "",
+    imageLarge: image?.large || "",
+  });
+
+  const href = `/isi?${params.toString()}`;
+
   return (
     <article style={{ display: "flex", flexDirection: "column" }}>
-      <a href={link} target="_blank" rel="noopener noreferrer" style={{ display: "block", overflow: "hidden", borderRadius: 2, textDecoration: "none" }}>
+      <Link href={href} style={{ display: "block", overflow: "hidden", borderRadius: 2, textDecoration: "none" }}>
         <div style={{ position: "relative", width: "100%", aspectRatio: "4/3", backgroundColor: "#e0ddd8", display: "flex", alignItems: "center", justifyContent: "center" }}>
           {image?.small ? (
             <Image src={image.small} alt={title} fill style={{ objectFit: "cover" }} />
@@ -231,13 +241,13 @@ function NewsCard({ title, link, contentSnippet, image, isoDate }: ApiArticle) {
             <span style={{ color: "#6b6b6b" }}>No Image</span>
           )}
         </div>
-      </a>
+      </Link>
       <div style={{ paddingTop: 14, display: "flex", flexDirection: "column", gap: 8 }}>
         <span style={{ fontFamily: "system-ui, sans-serif", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#6b6b6b" }}>
           {formattedDate}
         </span>
         <h2 style={{ fontFamily: "Georgia, serif", fontSize: "1.1rem", fontWeight: 700, lineHeight: 1.25, color: "#1a1a1a", margin: 0 }}>
-          <a href={link} target="_blank" rel="noopener noreferrer" style={{ color: "inherit", textDecoration: "none" }}>{title}</a>
+          <Link href={href} style={{ color: "inherit", textDecoration: "none" }}>{title}</Link>
         </h2>
         <p style={{ fontFamily: "system-ui, sans-serif", fontSize: "0.8rem", lineHeight: 1.65, color: "#6b6b6b", margin: 0, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
           {contentSnippet}
@@ -276,21 +286,25 @@ function LatestNews({ articles, categoryLabel }: LatestNewsProps) {
 
 function Footer() {
   return (
-    <footer style={{ backgroundColor: "#f9f8f6", borderTop: "1px solid #e0ddd8", padding: "28px 0" }}>
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
-        <Link href="/" style={{ fontFamily: "Georgia, serif", fontWeight: 900, fontSize: "0.9rem", letterSpacing: "0.04em", color: "#1a1a1a", textDecoration: "none", flexShrink: 0 }}>
-          PORTAL BERITA
-        </Link>
-        <nav style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 20, flex: 1, justifyContent: "center" }}>
-          {FOOTER_LINKS.map((link) => (
-            <a key={link} href="#" style={{ fontFamily: "system-ui, sans-serif", fontSize: "0.7rem", color: "#6b6b6b", textDecoration: "none" }}>
-              {link}
-            </a>
-          ))}
-        </nav>
-        <span style={{ fontFamily: "system-ui, sans-serif", fontSize: "0.7rem", color: "#6b6b6b", flexShrink: 0, marginLeft: "auto" }}>
-          &copy; {new Date().getFullYear()} Portal Berita. All Rights Reserved.
-        </span>
+    <footer className="w-full mt-stack-lg bg-[#001F3F] border-t border-[#001F3F] py-12 text-white">
+      <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-12">
+          <div className="font-headline-md text-headline-md text-white font-bold">INI BERITA</div>
+          <ul className="flex flex-wrap justify-center gap-6 text-white font-body-md opacity-70 list-none p-0 m-0">
+            {FOOTER_LINKS.map((link) => (
+              <li key={link}>
+                <Link className="hover:opacity-100 transition-opacity text-white no-underline" href="/">
+                  {link}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="text-center pt-8 border-t border-white/10">
+          <p className="font-body-md text-sm text-gray-300 opacity-70 m-0">
+            &copy; {new Date().getFullYear()} Portal Berita. All rights reserved. Designed for the intellectually curious.
+          </p>
+        </div>
       </div>
     </footer>
   );
@@ -299,9 +313,9 @@ function Footer() {
 
 const PAGE_SIZE = 9;
 
-export default function PortalBerita() {
+export default function PortalBerita({ category: initialCategory }: { category?: string }) {
   const [articles, setArticles] = useState<ApiArticle[]>([]);
-  const [category, setCategory] = useState<string>("");
+  const [category, setCategory] = useState<string>(initialCategory ?? "");
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -382,7 +396,7 @@ export default function PortalBerita() {
             Memuat berita...
           </div>
         )}
-        
+
         {error && (
           <div style={{ textAlign: "center", padding: "100px 0", fontFamily: "system-ui, sans-serif", color: "#d9534f" }}>
             {error}
