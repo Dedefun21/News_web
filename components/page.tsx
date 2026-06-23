@@ -115,33 +115,30 @@ const FOOTER_LINKS = ["Tentang Kami", "Kebijakan Privasi", "Syarat & Ketentuan",
 
 interface NavbarProps {
   currentCategory: string;
-  onCategoryChange: (path: string) => void;
 }
-function Navbar({ currentCategory, onCategoryChange }: NavbarProps) {
+function Navbar({ currentCategory }: NavbarProps) {
   return (
     <header className="w-full top-0 sticky z-50 bg-[#001F3F] border-b border-[#001F3F] h-20 text-white shadow-md">
       <nav className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto h-full">
         <div className="flex items-center gap-8">
-          <button
-            onClick={() => onCategoryChange("")}
-            className="font-headline-md text-headline-md font-bold text-white bg-transparent border-none cursor-pointer"
-          >
+          <Link href="/" className="font-headline-md text-headline-md font-bold text-white no-underline">
             INI BERITA
-          </button>
+          </Link>
           <ul className="hidden lg:flex items-center gap-6 m-0 p-0 list-none">
             {NAV_LINKS.map((link) => {
               const isActive = currentCategory === link.path;
+              const href = link.path === "" ? "/" : `/kategori/${link.path}`;
               return (
                 <li key={link.label}>
-                  <button
-                    onClick={() => onCategoryChange(link.path)}
-                    className={`font-label-sm text-label-sm uppercase tracking-wider h-20 flex items-center transition-colors duration-200 cursor-pointer bg-transparent border-t-0 border-l-0 border-r-0 ${isActive
+                  <Link
+                    href={href}
+                    className={`font-label-sm text-label-sm uppercase tracking-wider h-20 flex items-center transition-colors duration-200 no-underline ${isActive
                       ? "text-white border-b-2 border-white"
                       : "text-white/70 hover:text-white border-b-2 border-transparent"
                       }`}
                   >
                     {link.label}
-                  </button>
+                  </Link>
                 </li>
               );
             })}
@@ -313,9 +310,9 @@ function Footer() {
 
 const PAGE_SIZE = 9;
 
-export default function PortalBerita({ category: initialCategory }: { category?: string }) {
+export default function PortalBerita({ category: categoryProp }: { category?: string }) {
+  const category = categoryProp ?? "";
   const [articles, setArticles] = useState<ApiArticle[]>([]);
-  const [category, setCategory] = useState<string>(initialCategory ?? "");
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -389,7 +386,7 @@ export default function PortalBerita({ category: initialCategory }: { category?:
 
   return (
     <div style={{ backgroundColor: "#f9f8f6", minHeight: "100vh" }}>
-      <Navbar currentCategory={category} onCategoryChange={setCategory} />
+      <Navbar currentCategory={category} />
       <main>
         {loading && (
           <div style={{ textAlign: "center", padding: "100px 0", fontFamily: "system-ui, sans-serif", color: "#6b6b6b" }}>
