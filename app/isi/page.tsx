@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -16,7 +16,7 @@ interface ApiArticle {
     };
 }
 
-export default function IsiBeritaPage() {
+function IsiBeritaContent() {
     const searchParams = useSearchParams();
     const [articles, setArticles] = useState<ApiArticle[]>([]);
     const [loading, setLoading] = useState(true);
@@ -275,5 +275,13 @@ export default function IsiBeritaPage() {
                 </div>
             </footer>
         </div>
+    );
+}
+
+export default function IsiBeritaPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center font-body-md">Memuat...</div>}>
+            <IsiBeritaContent />
+        </Suspense>
     );
 }
